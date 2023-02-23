@@ -22,6 +22,7 @@ const userSchema = mongoose.Schema(
     },
   },
   {
+    // created at updated at auto.
     timestamps: true,
   }
 );
