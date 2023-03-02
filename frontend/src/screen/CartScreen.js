@@ -23,6 +23,8 @@ const CartScreen = ({ match }) => {
   const { id } = useParams();
   const productId = id;
   const navigate = useNavigate();
+
+  //replacement for location.search
   const qty = Object.fromEntries([...searchParams])
     ? Number(Object.fromEntries([...searchParams]).qty)
     : 1;
