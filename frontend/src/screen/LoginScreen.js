@@ -25,7 +25,11 @@ const LoginScreen = () => {
   useEffect(() => {
     if (userInfo) {
       // replacement for history.push
-      navigate(redirect);
+      if (redirect === "shipping") {
+        navigate("/shipping");
+      } else {
+        navigate(redirect);
+      }
     }
   }, [redirect, userInfo, navigate]);
 
