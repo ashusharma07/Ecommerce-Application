@@ -1,6 +1,5 @@
 import Order from "../Models/orderModel.js";
 import asyncHandler from "express-async-handler";
-import { json } from "express";
 
 // @desc     create new orders
 // @desc     POST /api/orders
@@ -36,4 +35,44 @@ const addOrderItems = asyncHandler(async (req, res) => {
   }
 });
 
-export { addOrderItems };
+// @desc     get order by id
+// @desc     GET /api/orders/:id
+// @desc      private
+const getOrderById = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id).populate(
+    "user",
+    "name email"
+  );
+
+  if (order) {
+    res.json(order);
+  } else {
+    res.status(401);
+    throw new Error("order not found");
+  }
+});
+
+// @desc     update order to paid
+// @desc     PUT /api/orders/:id/pay
+// @desc      private
+const updateOrderToPaid = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    (order.isPaid = true), (order.paidAt = Date.now());
+    order.paymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      eamil_address: req.body.payer.eamil_address,
+    };
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(401);
+    throw new Error("order not found");
+  }
+});
+
+export { addOrderItems, getOrderById, updateOrderToPaid };
