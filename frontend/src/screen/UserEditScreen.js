@@ -9,7 +9,6 @@ import { getUserDetails } from "../actions/userAction";
 
 const UserEditScreen = () => {
   const { id } = useParams();
-  console.log(id);
   const userId = id;
 
   const [name, setName] = useState("");
