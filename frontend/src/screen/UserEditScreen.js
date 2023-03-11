@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import Message from "../component/Message";
 import Loader from "../component/Loader";
 import FormContainer from "../component/FormContainer";
-import { getUserDetails } from "../actions/userAction";
+import { getUserDetails, updateUser } from "../actions/userAction";
+import { USER_UPDATE_RESET } from "../constants/userConstant";
 
 const UserEditScreen = () => {
   const { id } = useParams();
@@ -15,8 +16,6 @@ const UserEditScreen = () => {
   const [email, setEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const location = useLocation();
-
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -24,18 +23,31 @@ const UserEditScreen = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
 
+  const userUpdate = useSelector((state) => state.userUpdate);
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = userUpdate;
+
   useEffect(() => {
-    if (!user.name || user._id !== userId) {
-      dispatch(getUserDetails(userId));
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_RESET });
+      navigate("/admin/userlist");
     } else {
-      setName(user.name);
-      setEmail(user.email);
-      setIsAdmin(user.isAdmin);
+      if (!user.name || user._id !== userId) {
+        dispatch(getUserDetails(userId));
+      } else {
+        setName(user.name);
+        setEmail(user.email);
+        setIsAdmin(user.isAdmin);
+      }
     }
-  }, [user, dispatch, userId]);
+  }, [user, dispatch, userId, successUpdate, navigate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
+    dispatch(updateUser({ _id: userId, name, email, isAdmin }));
   };
 
   return (
@@ -45,6 +57,8 @@ const UserEditScreen = () => {
       </Link>
       <FormContainer>
         <h1>Edit User</h1>
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
