@@ -30,6 +30,9 @@ const CartScreen = ({ match }) => {
     : 1;
   const dispatch = useDispatch();
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const cart = useSelector((state) => state.cart);
 
   const { cartItems } = cart;
@@ -38,7 +41,7 @@ const CartScreen = ({ match }) => {
     if (productId) {
       return dispatch(addToCart(productId, qty));
     }
-  }, [dispatch, productId, qty]);
+  }, [dispatch, productId, qty, userInfo, navigate]);
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));
