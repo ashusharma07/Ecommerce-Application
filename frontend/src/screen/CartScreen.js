@@ -42,7 +42,7 @@ const CartScreen = ({ match }) => {
       navigate("/login");
     }
     if (productId) {
-      return dispatch(addToCart(productId, qty));
+      dispatch(addToCart(productId, qty));
     }
   }, [dispatch, productId, qty, userInfo, navigate]);
 
